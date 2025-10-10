@@ -1,4 +1,4 @@
-package com.example;
+package demo.src.railsystem;
 
 import java.math.BigDecimal;
 
