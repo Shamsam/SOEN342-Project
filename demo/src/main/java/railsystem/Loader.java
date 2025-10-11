@@ -1,9 +1,10 @@
+package railsystem;
+
 import java.util.ArrayList;
 import java.util.EnumSet;
 import java.util.List;
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.UncheckedIOException;
 import java.math.BigDecimal;
 import java.nio.charset.StandardCharsets;
@@ -32,7 +33,7 @@ public final class Loader {
             char c = line.charAt(i);
             if (inQuotes) {
                 int adjustment = handleQuotedChar(line, i, c, sb);
-                i += adjustment; // Add the adjustment instead of direct assignment
+                i += adjustment;
                 if (c == '\"' && (i + 1 >= line.length() || line.charAt(i + 1) != '\"')) {
                     inQuotes = false;
                 }
@@ -173,8 +174,17 @@ public final class Loader {
             BigDecimal parsedFirstClass = new BigDecimal(cols.get(7));
             BigDecimal parsedSecondClass = new BigDecimal(cols.get(8));
 
-            parsedConnections.add(new Connection(parsedRouteId, parsedTrainType, parsedSchedule, parsedFirstClass,
-                    parsedSecondClass, parsedDepCity, parsedDepartTime, parsedArrCity, parsedArrivalTime, isNextDay));
+            parsedConnections.add(Connection.of(
+                    parsedRouteId,
+                    parsedTrainType,
+                    parsedSchedule,
+                    parsedFirstClass,
+                    parsedSecondClass,
+                    parsedDepCity,
+                    parsedDepartTime,
+                    parsedArrCity,
+                    parsedArrivalTime,
+                    isNextDay));
         }
         return parsedConnections;
     }
