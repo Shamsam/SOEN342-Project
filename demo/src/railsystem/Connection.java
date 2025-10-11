@@ -70,16 +70,16 @@ public class Connection {
         this.arrivalStop = arrivalStop;
     }
 
-    public void printInfo() {
-        System.out.println("Route ID: " + routeId);
-        System.out.println("Train Type: " + train.getTrainType());
-        System.out.println("Operating Days: " + schedule.getOperatingDays());
-        System.out.println("First Class Rate: " + ticketRates.getFirstClass());
-        System.out.println("Second Class Rate: " + ticketRates.getSecondClass());
-        System.out.println("Departure City: " + departureStop.getCity().getName());
-        System.out.println("Departure Time: " + departureStop.getScheduledStop());
-        System.out.println("Arrival City: " + arrivalStop.getCity().getName());
-        System.out.println(
-                "Arrival Time: " + arrivalStop.getScheduledStop() + (arrivalStop.getNextDay() ? " (+1d)" : ""));
+    @Override
+    public String toString() {
+        return "Route ID: " + routeId + "\n"
+                + "Train Type: " + train.getTrainType() + "\n"
+                + "Operating Days: " + schedule.getOperatingDays() + "\n"
+                + "First Class Rate: " + ticketRates.getFirstClass() + "\n"
+                + "Second Class Rate: " + ticketRates.getSecondClass() + "\n"
+                + "Departure City: " + departureStop.getCity().getName() + "\n"
+                + "Departure Time: " + departureStop.getScheduledStop() + "\n"
+                + "Arrival City: " + arrivalStop.getCity().getName() + "\n"
+                + "Arrival Time: " + arrivalStop.getScheduledStop() + (arrivalStop.getNextDay() ? " (+1d)" : "");
     }
 }

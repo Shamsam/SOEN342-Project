@@ -2,131 +2,150 @@ import java.math.BigDecimal;
 import java.util.Set;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
+import java.util.Optional;
 
 public class SearchCriteria {
-    City departureCity;
-    City arrivalCity;
-    LocalTime earliestDeparture;
-    LocalTime latestArrival;
-    boolean nextDay;
-    Train preferredTrain;
-    Set<DayOfWeek> travelDays;
-    BigDecimal firstClassrate;
-    BigDecimal secondClassRate;
+    Optional<String> departureCity;
+    Optional<String> arrivalCity;
+    Optional<LocalTime> earliestDeparture;
+    Optional<LocalTime> latestArrival;
+    Optional<Boolean> nextDay;
+    Optional<String> preferredTrain;
+    Optional<Set<DayOfWeek>> travelDays;
+    Optional<BigDecimal> firstClassrate;
+    Optional<BigDecimal> secondClassRate;
 
-    public SearchCriteria(City departureCity, City arrivalCity, LocalTime earliestDeparture, LocalTime latestArrival,
+    public SearchCriteria(String departureCity, String arrivalCity, LocalTime earliestDeparture,
+            LocalTime latestArrival,
             boolean nextDay,
-            Train preferredTrain, Set<DayOfWeek> travelDays, BigDecimal firstClassrate,
+            String preferredTrain, Set<DayOfWeek> travelDays, BigDecimal firstClassrate,
             BigDecimal secondClassRate) {
-        this.departureCity = departureCity;
-        this.arrivalCity = arrivalCity;
-        this.earliestDeparture = earliestDeparture;
-        this.latestArrival = latestArrival;
-        this.nextDay = nextDay;
-        this.preferredTrain = preferredTrain;
-        this.travelDays = travelDays;
-        this.firstClassrate = firstClassrate;
-        this.secondClassRate = secondClassRate;
+        this.departureCity = Optional.ofNullable(departureCity);
+        this.arrivalCity = Optional.ofNullable(arrivalCity);
+        this.earliestDeparture = Optional.ofNullable(earliestDeparture);
+        this.latestArrival = Optional.ofNullable(latestArrival);
+        this.nextDay = Optional.of(nextDay);
+        this.preferredTrain = Optional.ofNullable(preferredTrain);
+        this.travelDays = Optional.ofNullable(travelDays);
+        this.firstClassrate = Optional.ofNullable(firstClassrate);
+        this.secondClassRate = Optional.ofNullable(secondClassRate);
     }
 
-    public City getDepartureCity() {
-        return departureCity;
+    public SearchCriteria() {
+        this.departureCity = Optional.empty();
+        this.arrivalCity = Optional.empty();
+        this.earliestDeparture = Optional.empty();
+        this.latestArrival = Optional.empty();
+        this.nextDay = Optional.empty();
+        this.preferredTrain = Optional.empty();
+        this.travelDays = Optional.empty();
+        this.firstClassrate = Optional.empty();
+        this.secondClassRate = Optional.empty();
     }
 
-    public void setDepartureCity(City departureCity) {
-        this.departureCity = departureCity;
+    public String getDepartureCity() {
+        return departureCity.orElse(null);
     }
 
-    public City getArrivalCity() {
-        return arrivalCity;
+    public void setDepartureCity(String departureCity) {
+        this.departureCity = Optional.ofNullable(departureCity);
     }
 
-    public void setArrivalCity(City arrivalCity) {
-        this.arrivalCity = arrivalCity;
+    public String getArrivalCity() {
+        return arrivalCity.orElse(null);
+    }
+
+    public void setArrivalCity(String arrivalCity) {
+        this.arrivalCity = Optional.ofNullable(arrivalCity);
     }
 
     public LocalTime getEarliestDeparture() {
-        return earliestDeparture;
+        return earliestDeparture.orElse(null);
     }
 
     public void setEarliestDeparture(LocalTime earliestDeparture) {
-        this.earliestDeparture = earliestDeparture;
+        this.earliestDeparture = Optional.ofNullable(earliestDeparture);
     }
 
     public LocalTime getLatestArrival() {
-        return latestArrival;
+        return latestArrival.orElse(null);
     }
 
     public void setLatestArrival(LocalTime latestArrival) {
-        this.latestArrival = latestArrival;
+        this.latestArrival = Optional.ofNullable(latestArrival);
     }
 
     public boolean getNextDay() {
-        return nextDay;
+        return nextDay.orElse(false);
     }
 
     public void setNextDay(boolean nextDay) {
-        this.nextDay = nextDay;
+        this.nextDay = Optional.of(nextDay);
     }
 
-    public Train getPreferredTrain() {
-        return preferredTrain;
+    public String getPreferredTrain() {
+        return preferredTrain.orElse(null);
     }
 
-    public void setPreferredTrain(Train preferredTrain) {
-        this.preferredTrain = preferredTrain;
+    public void setPreferredTrain(String preferredTrain) {
+        this.preferredTrain = Optional.ofNullable(preferredTrain);
     }
 
     public Set<DayOfWeek> getTravelDays() {
-        return travelDays;
+        return travelDays.orElse(null);
     }
 
     public void setTravelDays(Set<DayOfWeek> travelDays) {
-        this.travelDays = travelDays;
+        this.travelDays = Optional.ofNullable(travelDays);
     }
 
     public BigDecimal getFirstClassrate() {
-        return firstClassrate;
+        return firstClassrate.orElse(null);
     }
 
     public void setFirstClassrate(BigDecimal firstClassrate) {
-        this.firstClassrate = firstClassrate;
+        this.firstClassrate = Optional.ofNullable(firstClassrate);
     }
 
     public BigDecimal getSecondClassRate() {
-        return secondClassRate;
+        return secondClassRate.orElse(null);
     }
 
     public void setSecondClassRate(BigDecimal secondClassRate) {
-        this.secondClassRate = secondClassRate;
+        this.secondClassRate = Optional.ofNullable(secondClassRate);
     }
 
     public boolean matches(Connection connection) {
-        if (connection.getDepartureStop().getCity() != this.departureCity) {
+        if (this.departureCity.isPresent()
+                && !connection.getDepartureStop().getCity().getName().equals(this.departureCity.get())) {
             return false;
         }
-        if (connection.getArrivalStop().getCity() != this.arrivalCity) {
+        if (this.arrivalCity.isPresent()
+                && !connection.getArrivalStop().getCity().getName().equals(this.arrivalCity.get())) {
             return false;
         }
-        if (connection.getDepartureStop().getScheduledStop().compareTo(this.earliestDeparture) < 0) {
+        if (this.earliestDeparture.isPresent() &&
+                connection.getDepartureStop().getScheduledStop().compareTo(this.earliestDeparture.get()) < 0) {
             return false;
         }
-        if (connection.getArrivalStop().getNextDay() == this.nextDay
-                && connection.getArrivalStop().getScheduledStop().compareTo(this.latestArrival) > 0) {
+        if (this.nextDay.isPresent() && connection.getArrivalStop().getNextDay() == this.nextDay.get()
+                && connection.getArrivalStop().getScheduledStop().compareTo(this.latestArrival.orElse(null)) > 0) {
             return false;
         }
-        if (this.preferredTrain != null && connection.getTrain() != this.preferredTrain) {
+        if (this.preferredTrain.isPresent()
+                && !connection.getTrain().getTrainType().equals(this.preferredTrain.get())) {
             return false;
         }
-        if (!connection.getSchedule().getOperatingDays().containsAll(this.travelDays)) {
+        if (this.travelDays.isPresent()
+                && !connection.getSchedule().getOperatingDays().containsAll(this.travelDays.get())) {
             return false;
         }
-        if (this.firstClassrate != null
-                && connection.getTicketRates().getFirstClass().compareTo(this.firstClassrate) > 0) {
+        if (this.firstClassrate.isPresent()
+                && connection.getTicketRates().getFirstClass().compareTo(this.firstClassrate.get()) > 0) {
             return false;
         }
-        if (this.secondClassRate != null
-                && connection.getTicketRates().getSecondClass().compareTo(this.secondClassRate) > 0) {
+        if (this.secondClassRate.isPresent()
+                && connection.getTicketRates().getSecondClass().compareTo(this.secondClassRate.get()) > 0) {
             return false;
         }
         return true;
