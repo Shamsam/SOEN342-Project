@@ -1,4 +1,3 @@
-package demo.src.railsystem;
 import java.time.LocalTime;
 
 public class TrainStop {

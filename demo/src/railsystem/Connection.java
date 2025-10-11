@@ -1,18 +1,17 @@
-package demo.src.railsystem;
 import java.math.BigDecimal;
 import java.util.Set;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 
 public class Connection {
-    private int routeId;
+    private String routeId;
     private Train train;
     private TrainSchedule schedule;
     private TicketRates ticketRates;
     private TrainStop departureStop;
     private TrainStop arrivalStop;
 
-    public Connection(int routeId, String trainType, Set<DayOfWeek> operatingDays, BigDecimal firstClassRate,
+    public Connection(String routeId, String trainType, Set<DayOfWeek> operatingDays, BigDecimal firstClassRate,
             BigDecimal secondClassRate, String departureCity, LocalTime departureTime, String arrivalCity,
             LocalTime arrivalTime, boolean nextDay) {
         this.routeId = routeId;
@@ -23,11 +22,11 @@ public class Connection {
         this.arrivalStop = new TrainStop(arrivalCity, arrivalTime, nextDay);
     }
 
-    public int getRouteId() {
+    public String getRouteId() {
         return routeId;
     }
 
-    public void setRouteId(int routeId) {
+    public void setRouteId(String routeId) {
         this.routeId = routeId;
     }
 
@@ -57,7 +56,7 @@ public class Connection {
 
     public TrainStop getDepartureStop() {
         return departureStop;
-    } 
+    }
 
     public void setDepartureStop(TrainStop departureStop) {
         this.departureStop = departureStop;
@@ -69,5 +68,18 @@ public class Connection {
 
     public void setArrivalStop(TrainStop arrivalStop) {
         this.arrivalStop = arrivalStop;
+    }
+
+    public void printInfo() {
+        System.out.println("Route ID: " + routeId);
+        System.out.println("Train Type: " + train.getTrainType());
+        System.out.println("Operating Days: " + schedule.getOperatingDays());
+        System.out.println("First Class Rate: " + ticketRates.getFirstClass());
+        System.out.println("Second Class Rate: " + ticketRates.getSecondClass());
+        System.out.println("Departure City: " + departureStop.getCity().getName());
+        System.out.println("Departure Time: " + departureStop.getScheduledStop());
+        System.out.println("Arrival City: " + arrivalStop.getCity().getName());
+        System.out.println(
+                "Arrival Time: " + arrivalStop.getScheduledStop() + (arrivalStop.getNextDay() ? " (+1d)" : ""));
     }
 }

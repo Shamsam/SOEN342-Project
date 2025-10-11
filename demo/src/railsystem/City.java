@@ -1,5 +1,3 @@
-package demo.src.railsystem;
-
 public class City {
     private String name;
 

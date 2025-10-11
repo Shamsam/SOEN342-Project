@@ -1,5 +1,3 @@
-package demo.src.railsystem;
-
 import java.math.BigDecimal;
 
 public class TicketRates {

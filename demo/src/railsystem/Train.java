@@ -1,5 +1,3 @@
-package demo.src.railsystem;
-
 public class Train {
     private String trainType;
 

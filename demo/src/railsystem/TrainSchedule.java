@@ -1,5 +1,3 @@
-package demo.src.railsystem;
-
 import java.util.Set;
 import java.time.DayOfWeek;
 
