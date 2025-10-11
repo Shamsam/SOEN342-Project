@@ -1,5 +1,3 @@
-package com.example;
-
 public class City {
     private String name;
 
