@@ -92,6 +92,7 @@ public class Main {
                     System.out.println("[4] Departure Time (Earliest first)");
                     System.out.println("[5] Arrival Time (Earliest first)");
                     System.out.println("[6] Number of Transfers (Fewest first)");
+                    System.out.println("[7] Create a Booking");
                     System.out.println("[0] Exit");
                     System.out.print("\nEnter your choice: ");
 
@@ -116,6 +117,25 @@ public class Main {
                             break;
                         case "6":
                             sortOption = Terminal.SortOption.TRANSFERS;
+                            break;
+                        case "7":
+                            System.out.println("Input trip option you'd like to book: ");
+                            int option = scanner.nextInt();
+                            ArrayList<String> nameList = new ArrayList<>();
+
+                            System.out.println("Input passengers first and last name: ");
+                            while (scanner.hasNextLine()) {
+                                String name = scanner.nextLine().trim();
+                                if (name.isEmpty()) {
+                                    break;
+                                }
+                                nameList.add(name);
+                            }
+                            System.out.println("Input class rate (First/Second): ");
+                            String classRate = scanner.nextLine().trim();
+                            terminal.createBooking(option, nameList, classRate);
+
+                            }
                             break;
                         case "0":
                             continueViewing = false;
