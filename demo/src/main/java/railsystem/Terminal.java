@@ -250,7 +250,8 @@ final class Terminal {
                 String secondArrivalCity = secondLeg.getArrivalStop().getCity().getName();
 
                 if (secondArrivalCity.equals(criteria.getArrivalCity())) {
-                    if (secondLeg.getArrivalStop().getScheduledStop().compareTo(criteria.getLatestArrival()) > 0) {
+                    if (criteria.getLatestArrival() != null && secondLeg.getArrivalStop().getScheduledStop()
+                            .compareTo(criteria.getLatestArrival()) > 0) {
                         continue;
                     }
                     trips.add(new Trip(List.of(firstLeg, secondLeg)));
@@ -280,7 +281,8 @@ final class Terminal {
                     }
 
                     if (thirdLeg.getArrivalStop().getCity().getName().equals(criteria.getArrivalCity())) {
-                        if (thirdLeg.getArrivalStop().getScheduledStop().compareTo(criteria.getLatestArrival()) > 0) {
+                        if (criteria.getLatestArrival() != null && thirdLeg.getArrivalStop()
+                                .getScheduledStop().compareTo(criteria.getLatestArrival()) > 0) {
                             continue;
                         }
                         trips.add(new Trip(List.of(firstLeg, secondLeg, thirdLeg)));
