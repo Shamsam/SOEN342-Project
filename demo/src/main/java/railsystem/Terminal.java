@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Comparator;
+import java.util.Scanner;
 
 final class Terminal {
     private static Terminal instance;
@@ -77,6 +78,17 @@ final class Terminal {
 
         List<Trip> trips = searchForConnections(criteria);
         return trips;
+    }
+
+    public Booking createBooking(Trip trip, String[] names, String classRate) {
+        List<Ticket> tickets;
+        for (String name : names) {
+            String[] fullName = name.split(" ");
+            Traveller traveller = new Traveller(fullName[0], fullName[1], 0);
+            tickets.add(new Ticket(trip, traveller, classRate));
+        }
+        Booking booking = new Booking(null);
+        return booking;
     }
 
     public enum SortOption {

@@ -10,7 +10,9 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+
 public final class Trip {
+
 
     private final List<Connection> connections;
     private final BigDecimal totalFirstClassRate;
