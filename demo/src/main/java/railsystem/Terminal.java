@@ -214,8 +214,6 @@ final class Terminal {
                 SearchCriteria.builder()
                         .departureCity(criteria.getDepartureCity())
                         .earliestDeparture(criteria.getEarliestDeparture())
-                        .latestArrival(criteria.getLatestArrival())
-                        .nextDay(criteria.getNextDay())
                         .preferredTrain(criteria.getPreferredTrain())
                         .travelDays(criteria.getTravelDays())
                         .firstClassRate(criteria.getFirstClassRate())
@@ -225,38 +223,69 @@ final class Terminal {
         for (Connection firstLeg : firstLegs) {
             String transferCity = firstLeg.getArrivalStop().getCity().getName();
 
-            if (transferCity.equals(firstLeg.getDepartureStop().getCity().getName()))
+            if (transferCity.equals(firstLeg.getDepartureStop().getCity().getName())) // Prevent loops
                 continue;
 
-            SearchCriteria secondLegCriteria = new SearchCriteria(criteria);
-            secondLegCriteria.setDepartureCity(transferCity);
+            Set<DayOfWeek> secondLegValidDays = calculateValidDaysForNextLeg(
+                    firstLeg.getSchedule().getOperatingDays(),
+                    firstLeg.getDepartureStop().getScheduledStop(),
+                    firstLeg.getArrivalStop().getScheduledStop(),
+                    firstLeg.getArrivalStop().isNextDay());
 
-            adjustTravelDaysForNextDay(criteria, secondLegCriteria, firstLeg.getArrivalStop().isNextDay());
-            secondLegCriteria.setEarliestDeparture(firstLeg.getArrivalStop().getScheduledStop().plusMinutes(20));
+            SearchCriteria secondLegCriteria = SearchCriteria.builder()
+                    .departureCity(transferCity)
+                    .preferredTrain(criteria.getPreferredTrain())
+                    .travelDays(secondLegValidDays)
+                    .firstClassRate(criteria.getFirstClassRate())
+                    .secondClassRate(criteria.getSecondClassRate())
+                    .build();
 
             List<Connection> secondLegs = connectionRepo.search(secondLegCriteria);
 
             for (Connection secondLeg : secondLegs) {
+                if (!areConnectionDaysCompatible(firstLeg, secondLeg)) {
+                    continue;
+                }
+
                 String secondArrivalCity = secondLeg.getArrivalStop().getCity().getName();
 
                 if (secondArrivalCity.equals(criteria.getArrivalCity())) {
+                    if (secondLeg.getArrivalStop().getScheduledStop().compareTo(criteria.getLatestArrival()) > 0) {
+                        continue;
+                    }
                     trips.add(new Trip(List.of(firstLeg, secondLeg)));
                     continue;
                 }
 
-                SearchCriteria thirdLegCriteria = new SearchCriteria(criteria);
-                thirdLegCriteria.setDepartureCity(secondArrivalCity);
+                Set<DayOfWeek> thirdLegValidDays = calculateValidDaysForNextLeg(
+                        secondLeg.getSchedule().getOperatingDays(),
+                        secondLeg.getDepartureStop().getScheduledStop(),
+                        secondLeg.getArrivalStop().getScheduledStop(),
+                        secondLeg.getArrivalStop().isNextDay());
 
-                int daysToAdd = calculateDaysToAdd(firstLeg, secondLeg);
-                adjustTravelDaysForNextDay(criteria, thirdLegCriteria, daysToAdd > 0);
-                thirdLegCriteria.setEarliestDeparture(secondLeg.getArrivalStop().getScheduledStop().plusMinutes(20));
+                SearchCriteria thirdLegCriteria = SearchCriteria.builder()
+                        .departureCity(secondArrivalCity)
+                        .arrivalCity(criteria.getArrivalCity())
+                        .preferredTrain(criteria.getPreferredTrain())
+                        .travelDays(thirdLegValidDays)
+                        .firstClassRate(criteria.getFirstClassRate())
+                        .secondClassRate(criteria.getSecondClassRate())
+                        .build();
 
                 List<Connection> thirdLegs = connectionRepo.search(thirdLegCriteria);
 
-                thirdLegs.stream()
-                        .filter(thirdLeg -> thirdLeg.getArrivalStop().getCity().getName()
-                                .equals(criteria.getArrivalCity()))
-                        .forEach(thirdLeg -> trips.add(new Trip(List.of(firstLeg, secondLeg, thirdLeg))));
+                for (Connection thirdLeg : thirdLegs) {
+                    if (!areConnectionDaysCompatible(secondLeg, thirdLeg)) {
+                        continue;
+                    }
+
+                    if (thirdLeg.getArrivalStop().getCity().getName().equals(criteria.getArrivalCity())) {
+                        if (thirdLeg.getArrivalStop().getScheduledStop().compareTo(criteria.getLatestArrival()) > 0) {
+                            continue;
+                        }
+                        trips.add(new Trip(List.of(firstLeg, secondLeg, thirdLeg)));
+                    }
+                }
             }
         }
 
@@ -264,24 +293,77 @@ final class Terminal {
         return trips;
     }
 
-    private void adjustTravelDaysForNextDay(SearchCriteria original,
-            SearchCriteria target,
-            boolean addDay) {
-        if (addDay && original.getTravelDays() != null) {
-            target.setTravelDays(
-                    original.getTravelDays().stream()
-                            .map(day -> day.plus(1))
-                            .collect(Collectors.toSet()));
+    private Set<DayOfWeek> calculateValidDaysForNextLeg(
+            Set<DayOfWeek> operationDays,
+            LocalTime departureTime,
+            LocalTime arrivalTime,
+            boolean arrivalIsNextDay) {
+
+        if (!arrivalIsNextDay) {
+            return operationDays;
+        } else {
+            return operationDays.stream()
+                    .map(day -> day.plus(1).compareTo(DayOfWeek.SUNDAY) > 0 ? DayOfWeek.MONDAY : day.plus(1))
+                    .collect(Collectors.toSet());
         }
     }
 
-    private int calculateDaysToAdd(Connection firstLeg, Connection secondLeg) {
-        int daysToAdd = 0;
-        if (firstLeg.getArrivalStop().isNextDay())
-            daysToAdd++;
-        if (secondLeg.getArrivalStop().isNextDay())
-            daysToAdd++;
-        return daysToAdd;
+    private boolean areConnectionDaysCompatible(Connection previous, Connection next) {
+        Set<DayOfWeek> previousOperationDays = previous.getSchedule().getOperatingDays();
+        Set<DayOfWeek> nextOperationDays = next.getSchedule().getOperatingDays();
+
+        LocalTime previousArrival = previous.getArrivalStop().getScheduledStop();
+        LocalTime nextDeparture = next.getDepartureStop().getScheduledStop();
+        boolean previousArrivalNextDay = previous.getArrivalStop().isNextDay();
+        boolean nextDepartureNextDay = next.getDepartureStop().isNextDay();
+
+        for (DayOfWeek prevOpDay : previousOperationDays) {
+            DayOfWeek actualArrivalDay = prevOpDay;
+            if (previousArrivalNextDay) {
+                actualArrivalDay = prevOpDay.plus(1);
+                if (actualArrivalDay.compareTo(DayOfWeek.SUNDAY) > 0) {
+                    actualArrivalDay = DayOfWeek.MONDAY;
+                }
+            }
+
+            for (DayOfWeek nextOpDay : nextOperationDays) {
+                DayOfWeek actualDepartureDay = nextOpDay;
+                if (nextDepartureNextDay) {
+                    actualDepartureDay = nextOpDay.plus(1);
+                    if (actualDepartureDay.compareTo(DayOfWeek.SUNDAY) > 0) {
+                        actualDepartureDay = DayOfWeek.MONDAY;
+                    }
+                }
+
+                if (actualDepartureDay.equals(actualArrivalDay)) {
+                    if (nextDeparture.isAfter(previousArrival.plusMinutes(19))) {
+                        long minutesDiff = java.time.Duration.between(previousArrival, nextDeparture).toMinutes();
+                        if (minutesDiff >= 20 && minutesDiff <= 1440) {
+                            return true;
+                        }
+                    }
+                } else {
+                    DayOfWeek nextDayAfterArrival = actualArrivalDay.plus(1);
+                    if (nextDayAfterArrival.compareTo(DayOfWeek.SUNDAY) > 0) {
+                        nextDayAfterArrival = DayOfWeek.MONDAY;
+                    }
+
+                    if (actualDepartureDay.equals(nextDayAfterArrival)) {
+                        long minutesUntilMidnight = java.time.Duration.between(previousArrival, LocalTime.MAX)
+                                .toMinutes() + 1;
+                        long minutesAfterMidnight = java.time.Duration.between(LocalTime.MIN, nextDeparture)
+                                .toMinutes();
+                        long totalMinutes = minutesUntilMidnight + minutesAfterMidnight;
+
+                        if (totalMinutes >= 20 && totalMinutes <= 1440) {
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 
     private String formatDuration(Duration duration) {

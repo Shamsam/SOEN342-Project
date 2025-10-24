@@ -1,10 +1,14 @@
 package railsystem;
 
 import java.math.BigDecimal;
+import java.time.DayOfWeek;
 import java.time.Duration;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public final class Trip {
 
@@ -18,7 +22,6 @@ public final class Trip {
         if (connections == null || connections.isEmpty()) {
             throw new IllegalArgumentException("Connections list cannot be null or empty");
         }
-
         this.connections = List.copyOf(connections); // Immutable copy
         this.totalFirstClassRate = connections.stream()
                 .map(c -> c.getTicketRates().getFirstClass())
@@ -51,23 +54,50 @@ public final class Trip {
     }
 
     private Duration calculateTotalDuration() {
+        if (connections.size() == 1) {
+            Connection c = connections.get(0);
+            Duration duration = Duration.between(
+                    c.getDepartureStop().getScheduledStop(),
+                    c.getArrivalStop().getScheduledStop());
+
+            if (c.getArrivalStop().isNextDay() || duration.isNegative()) {
+                duration = duration.plusDays(1);
+            }
+            return duration;
+        }
+
         Connection first = connections.get(0);
         Connection last = connections.get(connections.size() - 1);
 
-        Duration duration = Duration.between(
+        Duration totalDuration = Duration.between(
                 first.getDepartureStop().getScheduledStop(),
                 last.getArrivalStop().getScheduledStop());
 
-        // Count +1 day flags for arrival stops
-        int additionalDays = connections.stream()
-                .mapToInt(c -> c.getArrivalStop().isNextDay() ? 1 : 0)
-                .sum();
+        int daysCrossed = 0;
 
-        if (duration.isNegative() || additionalDays > 0) {
-            duration = duration.plusDays(additionalDays);
+        for (Connection c : connections) {
+            if (c.getArrivalStop().isNextDay()) {
+                daysCrossed++;
+            }
         }
 
-        return duration;
+        for (int i = 0; i < connections.size() - 1; i++) {
+            Connection current = connections.get(i);
+            Connection next = connections.get(i + 1);
+
+            LocalTime currentArrival = current.getArrivalStop().getScheduledStop();
+            LocalTime nextDeparture = next.getDepartureStop().getScheduledStop();
+
+            if (nextDeparture.isBefore(currentArrival)) {
+                daysCrossed++;
+            }
+        }
+
+        if (totalDuration.plusDays(daysCrossed).isNegative()) {
+            daysCrossed++;
+        }
+
+        return totalDuration.plusDays(daysCrossed);
     }
 
     private List<Duration> calculateTransferTimes() {
@@ -106,11 +136,62 @@ public final class Trip {
         return sb.toString();
     }
 
+    private String formatOperatingDays(Set<DayOfWeek> days) {
+        if (days.isEmpty()) {
+            return "No service";
+        }
+
+        if (days.size() == 7) {
+            return "Daily";
+        }
+
+        Set<DayOfWeek> weekdays = Set.of(
+                DayOfWeek.MONDAY, DayOfWeek.TUESDAY, DayOfWeek.WEDNESDAY,
+                DayOfWeek.THURSDAY, DayOfWeek.FRIDAY);
+        if (days.equals(weekdays)) {
+            return "Weekdays (Mon-Fri)";
+        }
+
+        Set<DayOfWeek> weekends = Set.of(DayOfWeek.SATURDAY, DayOfWeek.SUNDAY);
+        if (days.equals(weekends)) {
+            return "Weekends (Sat-Sun)";
+        }
+
+        List<DayOfWeek> sortedDays = days.stream()
+                .sorted()
+                .collect(Collectors.toList());
+
+        return sortedDays.stream()
+                .map(this::abbreviateDay)
+                .collect(Collectors.joining(", "));
+    }
+
+    private String abbreviateDay(DayOfWeek day) {
+        switch (day) {
+            case MONDAY:
+                return "Mon";
+            case TUESDAY:
+                return "Tue";
+            case WEDNESDAY:
+                return "Wed";
+            case THURSDAY:
+                return "Thu";
+            case FRIDAY:
+                return "Fri";
+            case SATURDAY:
+                return "Sat";
+            case SUNDAY:
+                return "Sun";
+            default:
+                return day.toString();
+        }
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("\n════════════════════════════════════════════════════════════════\n");
-        sb.append("TRIP SUMMARY (").append(connections.size()).append(" Connection");
+        sb.append("TRIP - SUMMARY (").append(connections.size()).append(" Connection");
         if (connections.size() > 1)
             sb.append("s");
         sb.append(")\n────────────────────────────────────────────────────────────────\n");
@@ -137,6 +218,8 @@ public final class Trip {
                     .append(c.getArrivalStop().getCity().getName()).append("\n")
                     .append("    Route: ").append(c.getRouteId())
                     .append(" | Train: ").append(c.getTrain().getTrainType()).append("\n")
+                    .append("    Operating Days: ").append(formatOperatingDays(c.getSchedule().getOperatingDays()))
+                    .append("\n")
                     .append("    Depart: ").append(c.getDepartureStop().getScheduledStop())
                     .append(" → Arrive: ").append(c.getArrivalStop().getScheduledStop());
             if (c.getArrivalStop().isNextDay())

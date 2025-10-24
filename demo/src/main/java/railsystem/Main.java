@@ -15,7 +15,7 @@ public class Main {
         System.out.println("╚════════════════════════════════════════════════════════════════╝");
 
         List<Connection> connections = terminal.getLoader()
-                .loadConnections(Paths.get("src/main/resources/eu_rail_network.csv"));
+                .loadConnections(Paths.get("demo/src/main/resources/eu_rail_network.csv"));
         terminal.setConnectionRepo(new ConnectionRepository(connections));
         System.out.println("Loaded " + connections.size() + " connections.\n");
 
