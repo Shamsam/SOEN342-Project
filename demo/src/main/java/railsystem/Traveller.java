@@ -22,7 +22,7 @@ public class Traveller {
         this.ID = id;
     }
 
-    public Traveller getInstance(String firstName, String lastName, int id) {
+    public static Traveller getInstance(String firstName, String lastName, int id) {
         if (firstName == null || firstName.trim().isEmpty() || lastName == null || lastName.trim().isEmpty()
                 || id <= 0) {
             throw new IllegalArgumentException("First name and last name cannot be null or empty");
