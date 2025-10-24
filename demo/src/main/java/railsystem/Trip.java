@@ -13,7 +13,6 @@ import java.util.stream.Collectors;
 
 public final class Trip {
 
-
     private final List<Connection> connections;
     private final BigDecimal totalFirstClassRate;
     private final BigDecimal totalSecondClassRate;
