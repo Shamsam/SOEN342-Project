@@ -2,3 +2,5 @@
 #Maven
 
 demo/target/
+
+.DS_Store
