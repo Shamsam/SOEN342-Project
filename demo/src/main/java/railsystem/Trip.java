@@ -5,9 +5,13 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 public final class Trip {
 
+    private static final AtomicLong ID_GENERATOR = new AtomicLong(1);
+
+    private final long tripId;
     private final List<Connection> connections;
     private final BigDecimal totalFirstClassRate;
     private final BigDecimal totalSecondClassRate;
@@ -18,7 +22,7 @@ public final class Trip {
         if (connections == null || connections.isEmpty()) {
             throw new IllegalArgumentException("Connections list cannot be null or empty");
         }
-
+        this.tripId = ID_GENERATOR.getAndIncrement();
         this.connections = List.copyOf(connections); // Immutable copy
         this.totalFirstClassRate = connections.stream()
                 .map(c -> c.getTicketRates().getFirstClass())
@@ -48,6 +52,10 @@ public final class Trip {
 
     public List<Duration> getTransferTimes() {
         return transferTimes;
+    }
+
+    public long getTripId() {
+        return tripId;
     }
 
     private Duration calculateTotalDuration() {
@@ -110,7 +118,7 @@ public final class Trip {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("\n════════════════════════════════════════════════════════════════\n");
-        sb.append("TRIP SUMMARY (").append(connections.size()).append(" Connection");
+        sb.append("TRIP #").append(tripId).append(" - SUMMARY (").append(connections.size()).append(" Connection");
         if (connections.size() > 1)
             sb.append("s");
         sb.append(")\n────────────────────────────────────────────────────────────────\n");
