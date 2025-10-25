@@ -17,7 +17,7 @@ public class Traveller {
     private String firstName;
     private String lastName;
     private int ID;
-    private List<Ticket> tickets;
+    private List<Ticket> tickets = new java.util.ArrayList<>();
 
     private Traveller(String firstName, String lastName, int id) {
         this.firstName = firstName;
