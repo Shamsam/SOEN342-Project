@@ -1,6 +1,7 @@
 package railsystem;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -11,11 +12,12 @@ import lombok.EqualsAndHashCode;
 @EqualsAndHashCode
 public class Traveller {
     private static final Map<Integer, Traveller> travellerRegistry = new ConcurrentHashMap<>();
+    private static int idCount = 0;
 
     private String firstName;
     private String lastName;
     private int ID;
-    private static int idCount = 0;
+    private List<Ticket> tickets;
 
     private Traveller(String firstName, String lastName, int id) {
         this.firstName = firstName;
