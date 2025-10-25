@@ -128,7 +128,7 @@ public class Main {
 
                                 ArrayList<String> nameList = new ArrayList<>();
                                 System.out.println(
-                                        "Input passenger(s) first and last name(s) (press Enter on empty line to finish): ");
+                                        "Input passenger(s) first name(s), last name(s), and id(s) (press Enter on empty line to finish): ");
                                 while (true) {
                                     String name = scanner.nextLine().trim();
                                     if (name.isEmpty()) {
