@@ -174,7 +174,7 @@ public class Main {
                 System.out.print("Last Name: ");
                 String lastName = scanner.nextLine().trim();
                 System.out.print("ID: ");
-                int id = Integer.parseInt(scanner.nextLine().trim());
+                String id = scanner.nextLine().trim();
                 Traveller traveller;
                 try {
                     traveller = Traveller.getInstance(firstName, lastName, id);
