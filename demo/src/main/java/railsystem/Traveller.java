@@ -1,6 +1,7 @@
 package railsystem;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -10,23 +11,21 @@ import lombok.EqualsAndHashCode;
 @Data
 @EqualsAndHashCode
 public class Traveller {
-    private static final Map<Integer, Traveller> travellerRegistry = new ConcurrentHashMap<>();
+    private static final Map<String, Traveller> travellerRegistry = new ConcurrentHashMap<>();
 
-    private String firstName;
-    private String lastName;
-    private int ID;
-    private static int idCount = 0;
+    private String firstName, lastName, id;
+    private List<Ticket> tickets = new java.util.ArrayList<>();
 
-    private Traveller(String firstName, String lastName, int id) {
+    private Traveller(String firstName, String lastName, String id) {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.ID = id;
+        this.id = id;
     }
 
-    public static Traveller getInstance(String firstName, String lastName, int id) {
+    public static Traveller getInstance(String firstName, String lastName, String id) {
         if (firstName == null || firstName.trim().isEmpty() || lastName == null || lastName.trim().isEmpty()
-                || id <= 0) {
-            throw new IllegalArgumentException("First name and last name cannot be null or empty");
+                || id == null || id.trim().isEmpty()) {
+            throw new IllegalArgumentException("First name, last name, and/or id cannot be null or empty");
         }
 
         Traveller existingTraveller = travellerRegistry.get(id);
@@ -39,21 +38,12 @@ public class Traveller {
         return newTraveller;
     }
 
-    public static Map<Integer, Traveller> getAllTravellers() {
+    public static Map<String, Traveller> getAllTravellers() {
         return Collections.unmodifiableMap(travellerRegistry);
     }
 
     public static void clearRegistry() {
         travellerRegistry.clear();
-    }
-
-    public static int getIdCount() {
-        return idCount;
-    }
-
-    public static int incrementIdCount() {
-        idCount += 1;
-        return idCount;
     }
 
 }

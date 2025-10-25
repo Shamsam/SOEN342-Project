@@ -24,6 +24,7 @@ public class Main {
             System.out.println("Please select an option:");
             System.out.println("[0] Display all connections");
             System.out.println("[1] Start a search");
+            System.out.println("[2] View your trips");
             System.out.println("[q] Quit");
             System.out.print("Enter your choice: ");
 
@@ -128,7 +129,7 @@ public class Main {
 
                                 ArrayList<String> nameList = new ArrayList<>();
                                 System.out.println(
-                                        "Input passenger(s) first and last name(s) (press Enter on empty line to finish): ");
+                                        "Input passenger(s) first name(s), last name(s), and id(s) (press Enter on empty line to finish): ");
                                 while (true) {
                                     String name = scanner.nextLine().trim();
                                     if (name.isEmpty()) {
@@ -164,6 +165,42 @@ public class Main {
                             terminal.sortTrips(searchResult, sortOption);
                             terminal.displayTrips(searchResult, sortOption);
                         }
+                    }
+                }
+            } else if (choice.equals("2")) {
+                System.out.println("\nEnter your name and id to view your trips.");
+                System.out.print("First Name: ");
+                String firstName = scanner.nextLine().trim();
+                System.out.print("Last Name: ");
+                String lastName = scanner.nextLine().trim();
+                System.out.print("ID: ");
+                String id = scanner.nextLine().trim();
+                Traveller traveller;
+                try {
+                    traveller = Traveller.getInstance(firstName, lastName, id);
+                } catch (IllegalArgumentException e) {
+                    System.out.println("\n  " + e.getMessage() + "\n");
+                    continue;
+                }
+                List<Ticket> tickets = traveller.getTickets();
+                System.out.println("To view current trips [0], to view past trips [1]: ");
+                String tripChoice = scanner.nextLine().trim();
+                if (tripChoice.equals("0")) {
+                    continue;
+                } else if (tripChoice.equals("1")) {
+                    System.out.println("\nNo past trips found.\n");
+                } else {
+                    System.out.println("\n  Invalid choice.\n");
+                    continue;
+                }
+
+                if (tickets == null || tickets.isEmpty()) {
+                    System.out.println("\n  No trips found for " + firstName + " " + lastName + ".\n");
+                } else {
+                    System.out.println("\n════════════ YOUR TRIPS ════════════\n");
+                    for (Ticket ticket : tickets) {
+                        System.out.println(ticket.toString());
+                        System.out.println("─────────────────────────────────────");
                     }
                 }
             } else if (choice.equalsIgnoreCase("q")) {

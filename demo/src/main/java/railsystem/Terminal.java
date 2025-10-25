@@ -84,8 +84,11 @@ final class Terminal {
         List<Ticket> tickets = new ArrayList<Ticket>();
         for (String name : names) {
             String[] fullName = name.split(" ");
-            Traveller traveller = Traveller.getInstance(fullName[0], fullName[1], Traveller.incrementIdCount());
-            tickets.add(new Ticket(trip, traveller, classRate));
+            Traveller traveller = Traveller.getInstance(fullName[0], fullName[1], fullName[2]);
+            Ticket ticket = new Ticket(trip, traveller, classRate);
+
+            traveller.getTickets().add(ticket);
+            tickets.add(ticket);
         }
         Booking booking = new Booking(tickets);
         return booking;
