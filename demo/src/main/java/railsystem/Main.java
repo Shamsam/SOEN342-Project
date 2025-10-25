@@ -124,20 +124,32 @@ public class Main {
                             case "7":
                                 System.out.println("Input trip option you'd like to book: ");
                                 int option = scanner.nextInt();
-                                scanner.nextLine();
+                                scanner.nextLine(); // consume newline
+
                                 ArrayList<String> nameList = new ArrayList<>();
-                                System.out.println("Input passenger(s) first and last name(s): ");
-                                while (scanner.hasNextLine()) {
+                                System.out.println(
+                                        "Input passenger(s) first and last name(s) (press Enter on empty line to finish): ");
+                                while (true) {
                                     String name = scanner.nextLine().trim();
                                     if (name.isEmpty()) {
                                         break;
                                     }
                                     nameList.add(name);
                                 }
-                                System.out.println(nameList);
+
+                                System.out.println("Passengers: " + nameList);
                                 System.out.println("Input class rate (First Class/Second Class): ");
                                 String classRate = scanner.nextLine().trim();
-                                Booking currentBooking = terminal.createBooking(searchResult.get(option), nameList,
+
+                                // Validate the option index
+                                if (option < 1 || option > searchResult.size()) {
+                                    System.out.println("Invalid option. Please select a valid trip number.");
+                                    break;
+                                }
+
+                                Booking currentBooking = terminal.createBooking(
+                                        searchResult.get(option - 1),
+                                        nameList,
                                         classRate);
                                 System.out.println(currentBooking);
                                 break;
