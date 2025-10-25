@@ -5,10 +5,10 @@ import lombok.Data;
 
 @Data
 public class Ticket {
-    Trip trip;
-    Traveller traveller;
-    String classRate;
-
+    private Trip trip;
+    private Traveller traveller;
+    private String classRate;
+    private int ticketId;
 
     public Ticket(Trip trip, Traveller traveller, String classRate) {
         this.trip = trip;
@@ -37,14 +37,14 @@ public class Ticket {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("════════════════════════ TICKET ════════════════════════\n");
+        sb.append("════════════════════════════ TICKET ════════════════════════════\n");
         sb.append(trip.toString());
-        sb.append("──────────────────────────────────────────────────────────\n");
+        sb.append("────────────────────────────────────────────────────────────────\n");
         sb.append("Traveller:\n");
         sb.append("- ").append(traveller.getLastName()).append(", ").append(traveller.getLastName()).append("\n");
         sb.append("Class Rate: ").append(classRate).append("\n");
         sb.append("Total Cost: $").append(getTotalCost()).append("\n");
-        sb.append("══════════════════════════════════════════════════════════\n");
+        sb.append("════════════════════════════════════════════════════════════════\n");
         return sb.toString();
 }
 }

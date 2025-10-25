@@ -15,26 +15,27 @@ public class Traveller {
     private String firstName;
     private String lastName;
     private int ID;
+    private static int idCount = 0;
 
-    private Traveller(String firstName, String lastName, int iD) {
+    private Traveller(String firstName, String lastName, int id) {
         this.firstName = firstName;
         this.lastName = lastName;
-        this.ID = iD;
+        this.ID = id;
     }
 
-    public static Traveller getInstance(String firstName, String lastName, int iD) {
+    public static Traveller getInstance(String firstName, String lastName, int id) {
         if (firstName == null || firstName.trim().isEmpty() || lastName == null || lastName.trim().isEmpty()
-                || iD <= 0) {
+                || id <= 0) {
             throw new IllegalArgumentException("First name and last name cannot be null or empty");
         }
 
-        Traveller existingTraveller = travellerRegistry.get(iD);
+        Traveller existingTraveller = travellerRegistry.get(id);
         if (existingTraveller != null) {
             return existingTraveller;
         }
 
-        Traveller newTraveller = new Traveller(firstName, lastName, iD);
-        travellerRegistry.put(iD, newTraveller);
+        Traveller newTraveller = new Traveller(firstName, lastName, id);
+        travellerRegistry.put(id, newTraveller);
         return newTraveller;
     }
 
@@ -44,6 +45,15 @@ public class Traveller {
 
     public static void clearRegistry() {
         travellerRegistry.clear();
+    }
+
+    public static int getIdCount() {
+        return idCount;
+    }
+
+    public static int incrementIdCount() {
+        idCount += 1;
+        return idCount;
     }
 
 }

@@ -21,13 +21,12 @@ public class Booking {
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        sb.append("\n════════════════════════ Booking Summary ══════════════════════\n");
+        sb.append("\n═════════════════════ Booking Summary ══════════════════\n");
         for (Ticket ticket : tickets) {
             sb.append(ticket.toString());
-            sb.append("──────────────────────────────────────────────────────────────\n");
         }
         sb.append("Total Booking Cost: $").append(getTotalBookingCost()).append("\n");
-        sb.append("══════════════════════════════════════════════════════════════\n");
+        sb.append("════════════════════════════════════════════════════════════════\n");
         return sb.toString();
     }
 }

@@ -95,6 +95,7 @@ public class Main {
                         System.out.println("[4] Departure Time (Earliest first)");
                         System.out.println("[5] Arrival Time (Earliest first)");
                         System.out.println("[6] Number of Transfers (Fewest first)");
+                        System.out.println("[7] Create a Booking");
                         System.out.println("[0] Exit");
                         System.out.print("\nEnter your choice: ");
 
@@ -120,6 +121,37 @@ public class Main {
                             case "6":
                                 sortOption = Terminal.SortOption.TRANSFERS;
                                 break;
+                            case "7":
+                                System.out.println("Input trip option you'd like to book: ");
+                                int option = scanner.nextInt();
+                                scanner.nextLine(); // consume newline
+
+                                ArrayList<String> nameList = new ArrayList<>();
+                                System.out.println(
+                                        "Input passenger(s) first and last name(s) (press Enter on empty line to finish): ");
+                                while (true) {
+                                    String name = scanner.nextLine().trim();
+                                    if (name.isEmpty()) {
+                                        break;
+                                    }
+                                    nameList.add(name);
+                                }
+                                System.out.println("Passengers: " + nameList);
+                                System.out.println("Input class rate (First Class/Second Class): ");
+                                String classRate = scanner.nextLine().trim();
+
+                                // Validate the option index
+                                if (option < 1 || option > searchResult.size()) {
+                                    System.out.println("Invalid option. Please select a valid trip number.");
+                                    break;
+                                }
+
+                                Booking currentBooking = terminal.createBooking(
+                                        searchResult.get(option - 1),
+                                        nameList,
+                                        classRate);
+                                System.out.println(currentBooking);
+                                break;
                             case "0":
                                 continueViewing = false;
                                 System.out.println("\nThank you for using the Rail System Booking System!");
@@ -133,8 +165,6 @@ public class Main {
                             terminal.displayTrips(searchResult, sortOption);
                         }
                     }
-                } else {
-                    System.out.println("\nNo trips found. Please try adjusting your search criteria.");
                 }
             } else if (choice.equalsIgnoreCase("q")) {
                 System.out.println("\nThank you for using the Rail System Booking System!");
