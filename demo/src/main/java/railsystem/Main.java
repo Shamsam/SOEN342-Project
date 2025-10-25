@@ -183,6 +183,17 @@ public class Main {
                     continue;
                 }
                 List<Ticket> tickets = traveller.getTickets();
+                System.out.println("To view current trips [0], to view past trips [1]: ");
+                String tripChoice = scanner.nextLine().trim();
+                if (tripChoice.equals("0")) {
+                    continue;
+                } else if (tripChoice.equals("1")) {
+                    System.out.println("\nNo past trips found.\n");
+                } else {
+                    System.out.println("\n  Invalid choice.\n");
+                    continue;
+                }
+
                 if (tickets == null || tickets.isEmpty()) {
                     System.out.println("\n  No trips found for " + firstName + " " + lastName + ".\n");
                 } else {
