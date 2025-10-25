@@ -136,7 +136,6 @@ public class Main {
                                     }
                                     nameList.add(name);
                                 }
-
                                 System.out.println("Passengers: " + nameList);
                                 System.out.println("Input class rate (First Class/Second Class): ");
                                 String classRate = scanner.nextLine().trim();

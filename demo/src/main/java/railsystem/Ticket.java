@@ -5,10 +5,10 @@ import lombok.Data;
 
 @Data
 public class Ticket {
-    Trip trip;
-    Traveller traveller;
-    String classRate;
-
+    private Trip trip;
+    private Traveller traveller;
+    private String classRate;
+    private int ticketId;
 
     public Ticket(Trip trip, Traveller traveller, String classRate) {
         this.trip = trip;
