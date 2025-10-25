@@ -24,7 +24,7 @@ public class Traveller {
 
     public static Traveller getInstance(String firstName, String lastName, String id) {
         if (firstName == null || firstName.trim().isEmpty() || lastName == null || lastName.trim().isEmpty()
-                || id == null || id.trim().isEmpty() ) {
+                || id == null || id.trim().isEmpty()) {
             throw new IllegalArgumentException("First name, last name, and/or id cannot be null or empty");
         }
 

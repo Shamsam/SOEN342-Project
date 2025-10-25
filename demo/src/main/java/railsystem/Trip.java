@@ -9,16 +9,18 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.UUID;
 
 
 public final class Trip {
-
+    private static int idCount = 0;
 
     private final List<Connection> connections;
     private final BigDecimal totalFirstClassRate;
     private final BigDecimal totalSecondClassRate;
     private final Duration totalDuration;
     private final List<Duration> transferTimes;
+    private final int id;
 
     public Trip(List<Connection> connections) {
         if (connections == null || connections.isEmpty()) {
@@ -33,6 +35,12 @@ public final class Trip {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         this.totalDuration = calculateTotalDuration();
         this.transferTimes = Collections.unmodifiableList(calculateTransferTimes());
+        this.id = getNextId();
+    }
+
+    private int getNextId() {
+        idCount += 1;
+        return idCount;
     }
 
     public List<Connection> getConnections() {

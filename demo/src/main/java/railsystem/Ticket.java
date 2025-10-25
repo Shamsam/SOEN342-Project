@@ -5,15 +5,23 @@ import lombok.Data;
 
 @Data
 public class Ticket {
+    private static int idCount = 0;
+
     private Trip trip;
     private Traveller traveller;
     private String classRate;
-    private int ticketId;
+    private int id;
 
     public Ticket(Trip trip, Traveller traveller, String classRate) {
         this.trip = trip;
         this.traveller = traveller;
         this.classRate = classRate;
+        this.id = getNextId();
+    }
+
+    private int getNextId() {
+        idCount += 1;
+        return idCount;
     }
 
     public BigDecimal getTotalCost() {
