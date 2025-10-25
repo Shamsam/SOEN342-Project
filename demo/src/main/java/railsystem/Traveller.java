@@ -15,6 +15,7 @@ public class Traveller {
     private String firstName;
     private String lastName;
     private int ID;
+    private static int idCount = 0;
 
     private Traveller(String firstName, String lastName, int id) {
         this.firstName = firstName;
@@ -44,6 +45,15 @@ public class Traveller {
 
     public static void clearRegistry() {
         travellerRegistry.clear();
+    }
+
+    public static int getIdCount() {
+        return idCount;
+    }
+
+    public static int incrementIdCount() {
+        idCount += 1;
+        return idCount;
     }
 
 }

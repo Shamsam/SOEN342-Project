@@ -121,9 +121,9 @@ public class Main {
                         case "7":
                             System.out.println("Input trip option you'd like to book: ");
                             int option = scanner.nextInt();
+                            scanner.nextLine();
                             ArrayList<String> nameList = new ArrayList<>();
-
-                            System.out.println("Input passengers first and last name: ");
+                            System.out.println("Input passenger(s) first and last name(s): ");
                             while (scanner.hasNextLine()) {
                                 String name = scanner.nextLine().trim();
                                 if (name.isEmpty()) {
@@ -131,11 +131,11 @@ public class Main {
                                 }
                                 nameList.add(name);
                             }
-                            System.out.println("Input class rate (First/Second): ");
+                            System.out.println(nameList);
+                            System.out.println("Input class rate (First Class/Second Class): ");
                             String classRate = scanner.nextLine().trim();
-                            terminal.createBooking(option, nameList, classRate);
-
-                            }
+                            Booking currentBooking = terminal.createBooking(searchResult.get(option), nameList, classRate);
+                            System.out.println(currentBooking);
                             break;
                         case "0":
                             continueViewing = false;

@@ -3,6 +3,7 @@ package railsystem;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
 import java.time.Duration;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -79,14 +80,16 @@ final class Terminal {
         return trips;
     }
 
-    public Booking createBooking(Trip trip, String[] names, String classRate) {
-        List<Ticket> tickets = new java.util.ArrayList<>();
+    public Booking createBooking(Trip trip, ArrayList<String> names, String classRate) {
+        List<Ticket> tickets = new ArrayList<Ticket>();
         for (String name : names) {
             String[] fullName = name.split(" ");
-            Traveller traveller = Traveller.getInstance(fullName[0], fullName[1], 0);
+            System.out.println(fullName.length);
+            System.out.println(fullName[0]);
+            Traveller traveller = Traveller.getInstance(fullName[0], fullName[1], Traveller.incrementIdCount());
             tickets.add(new Ticket(trip, traveller, classRate));
         }
-        Booking booking = new Booking(null);
+        Booking booking = new Booking(tickets);
         return booking;
     }
 
