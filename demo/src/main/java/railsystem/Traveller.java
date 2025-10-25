@@ -14,7 +14,7 @@ public class Traveller {
     private static final Map<String, Traveller> travellerRegistry = new ConcurrentHashMap<>();
 
     private String firstName, lastName, id;
-    private List<Ticket> tickets;
+    private List<Ticket> tickets = new java.util.ArrayList<>();
 
     private Traveller(String firstName, String lastName, String id) {
         this.firstName = firstName;

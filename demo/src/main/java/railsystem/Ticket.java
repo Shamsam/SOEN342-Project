@@ -19,16 +19,15 @@ public class Ticket {
     public BigDecimal getTotalCost() {
         BigDecimal cost;
 
-        if(classRate.equals("First Class")){
+        if (classRate.equals("First Class")) {
             cost = trip.getConnections().stream()
                     .map(c -> c.getTicketRates().getFirstClass())
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
-        } else if (classRate.equals("Second Class")){
+        } else if (classRate.equals("Second Class")) {
             cost = trip.getConnections().stream()
                     .map(c -> c.getTicketRates().getSecondClass())
                     .reduce(BigDecimal.ZERO, BigDecimal::add);
-        }
-        else {
+        } else {
             throw new IllegalArgumentException("Invalid class rate: " + classRate);
         }
         return cost;
@@ -41,10 +40,10 @@ public class Ticket {
         sb.append(trip.toString());
         sb.append("────────────────────────────────────────────────────────────────\n");
         sb.append("Traveller:\n");
-        sb.append("- ").append(traveller.getLastName()).append(", ").append(traveller.getLastName()).append("\n");
+        sb.append("- ").append(traveller.getLastName()).append(", ").append(traveller.getFirstName()).append("\n");
         sb.append("Class Rate: ").append(classRate).append("\n");
         sb.append("Total Cost: $").append(getTotalCost()).append("\n");
         sb.append("════════════════════════════════════════════════════════════════\n");
         return sb.toString();
-}
+    }
 }
