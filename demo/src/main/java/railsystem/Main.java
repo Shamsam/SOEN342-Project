@@ -2,11 +2,6 @@ package railsystem;
 
 import java.util.Scanner;
 
-/**
- * Main entry point for the Rail System Booking System.
- * This class has been refactored to delegate responsibilities to specialized
- * service classes.
- */
 public class Main {
     public static void main(String[] args) {
         Scanner scanner = null;

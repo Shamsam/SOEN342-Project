@@ -142,8 +142,11 @@ public class MenuSystem {
         searchArgs.add(earliestDeparture);
 
         // Arrival city
-        System.out.print("Arrival city: ");
-        searchArgs.add(scanner.nextLine().trim());
+        String arrivalCity = getValidatedInput(
+                "Arrival city: ",
+                this::isValidCity,
+                "Invalid city name. Please try again.");
+        searchArgs.add(arrivalCity);
 
         // Next day arrival with validation
         String nextDayArrival = getValidatedInput(
