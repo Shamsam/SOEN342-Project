@@ -4,3 +4,4 @@
 demo/target/
 
 .DS_Store
+db/project.db

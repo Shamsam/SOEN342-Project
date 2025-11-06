@@ -1,12 +1,30 @@
 package railsystem;
 
 import java.nio.file.Paths;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 
 public class Main {
     public static void main(String[] args) {
+
+        String url = "jdbc:sqlite:db/project.db"; // path from inside /demo/src
+        DBManager dbManager = new DBManager(url);
+
+        try (var conn = DriverManager.getConnection(url)) {
+            if (conn != null) {
+                var meta = conn.getMetaData();
+                System.out.println("The driver name is " + meta.getDriverName());
+                System.out.println("A new database has been created.");
+            }
+        } catch (SQLException e) {
+            System.out.println("❌ Connection failed: " + e.getMessage());
+        }
+
         Terminal terminal = Terminal.getInstance();
         Scanner scanner = new Scanner(System.in);
 
@@ -14,10 +32,24 @@ public class Main {
         System.out.println("║           Welcome to the Rail System Booking System!           ║");
         System.out.println("╚════════════════════════════════════════════════════════════════╝");
 
-        List<Connection> connections = terminal.getLoader()
-                .loadConnections(Paths.get("src/main/resources/eu_rail_network.csv"));
+        List<Connection> connections;
+
+        // Check if connections exist in database
+        if (dbManager.hasConnections()) {
+            System.out.println("Loading connections from database...");
+            connections = dbManager.loadConnections();
+        } else {
+            System.out.println("Loading connections from CSV file...");
+            connections = terminal.getLoader()
+                    .loadConnections(Paths.get("demo/src/main/resources/eu_rail_network.csv"));
+            
+            System.out.println("Saving connections to database...");
+            dbManager.saveConnections(connections);
+        }
+        
         terminal.setConnectionRepo(new ConnectionRepository(connections));
         System.out.println("Loaded " + connections.size() + " connections.\n");
+
 
         boolean running = true;
         while (running) {
