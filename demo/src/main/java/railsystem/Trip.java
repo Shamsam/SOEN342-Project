@@ -36,9 +36,13 @@ public final class Trip {
         this.id = getNextId();
     }
 
-    private int getNextId() {
+    private static int getNextId() {
         idCount += 1;
         return idCount;
+    }
+
+    public int getId() {
+        return id;
     }
 
     public List<Connection> getConnections() {
