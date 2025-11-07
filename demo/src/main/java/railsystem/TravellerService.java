@@ -2,9 +2,6 @@ package railsystem;
 
 import java.util.List;
 
-/**
- * Handles traveller-related operations such as viewing trips.
- */
 public class TravellerService {
     private final MenuSystem menuSystem;
 
@@ -12,9 +9,6 @@ public class TravellerService {
         this.menuSystem = menuSystem;
     }
 
-    /**
-     * Handles viewing a traveller's trips (current or past).
-     */
     public void viewTravellerTrips() {
         try {
             MenuSystem.TravellerInfo info = menuSystem.getTravellerInfo();

@@ -5,9 +5,6 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.List;
 
-/**
- * Handles database initialization and connection loading.
- */
 public class DatabaseInitializer {
     private final String databaseUrl;
     private final DBManager dbManager;
@@ -19,11 +16,6 @@ public class DatabaseInitializer {
         this.terminal = terminal;
     }
 
-    /**
-     * Initializes the database connection and verifies it's working.
-     * 
-     * @return true if initialization was successful, false otherwise
-     */
     public boolean initializeDatabase() {
         try (var conn = DriverManager.getConnection(databaseUrl)) {
             if (conn != null) {
@@ -39,11 +31,6 @@ public class DatabaseInitializer {
         return false;
     }
 
-    /**
-     * Loads connections either from database or CSV file.
-     * 
-     * @return true if connections were loaded successfully, false otherwise
-     */
     public boolean loadConnections() {
         try {
             List<Connection> connections;
@@ -76,9 +63,6 @@ public class DatabaseInitializer {
         }
     }
 
-    /**
-     * Helper method to load connections from CSV file.
-     */
     private List<Connection> loadFromCSV() {
         try {
             System.out.println("Loading connections from CSV file...");

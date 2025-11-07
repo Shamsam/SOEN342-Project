@@ -235,14 +235,11 @@ public class DBManager {
                Traveller traveller = ticket.getTraveller();
                Trip trip = ticket.getTrip();
                
-               // Save traveller if not exists
                saveTraveller(traveller.getId(), traveller.getFirstName(), traveller.getLastName());
-               
                if (!tripExists(trip.getId())) {
                    saveTrip(trip);
                }
                
-               // Save ticket
                ticketStmt.setInt(1, bookingId);
                ticketStmt.setLong(2, trip.getId());
                ticketStmt.setString(3, traveller.getId());
@@ -276,14 +273,12 @@ public class DBManager {
                 var rs = stmt.executeQuery(selectConnections)) {
 
             while (rs.next()) {
-                // Parse operating days back from string
                 String operatingDaysStr = rs.getString("operating_days");
-                // You'll need to implement parseOperatingDays method in Loader
 
                 railsystem.Connection connection = railsystem.Connection.of(
                         rs.getString("route_id"),
                         rs.getString("train_type"),
-                        parseOperatingDaysFromString(operatingDaysStr), // You need to implement this
+                        parseOperatingDaysFromString(operatingDaysStr),
                         rs.getBigDecimal("first_class_rate"),
                         rs.getBigDecimal("second_class_rate"),
                         rs.getString("departure_city"),
@@ -300,7 +295,6 @@ public class DBManager {
     }
 
     private Set<DayOfWeek> parseOperatingDaysFromString(String operatingDaysStr) {
-
         String cleaned = operatingDaysStr.replaceAll("[\\[\\]]", "");
         return Arrays.stream(cleaned.split(","))
                 .map(String::trim)
@@ -426,8 +420,6 @@ public class DBManager {
                 long tripId = rs.getLong("trip_id");
                 List<Connection> connections = getTripConnections(tripId);
                 Trip trip = new Trip(connections);
-                // Note: Trip constructor auto-generates ID, so we can't set the original ID
-                // You might need to modify Trip class to accept an ID in constructor
                 
                 // Create Ticket
                 Ticket ticket = new Ticket(trip, traveller, rs.getString("class_type"));

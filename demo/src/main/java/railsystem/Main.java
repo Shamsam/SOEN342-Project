@@ -34,7 +34,6 @@ public class Main {
             SearchService searchService = new SearchService(terminal, menuSystem);
             TravellerService travellerService = new TravellerService(menuSystem);
 
-            // Display welcome message
             menuSystem.displayWelcome();
 
             // Main application loop
@@ -72,7 +71,6 @@ public class Main {
             System.out.println("The application must exit.\n");
             e.printStackTrace();
         } finally {
-            // Ensure scanner is always closed
             if (scanner != null) {
                 scanner.close();
             }

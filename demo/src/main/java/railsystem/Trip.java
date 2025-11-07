@@ -11,14 +11,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 public final class Trip {
-    private static int idCount = 0;
+    private static long idCount = 0;
 
     private final List<Connection> connections;
     private final BigDecimal totalFirstClassRate;
     private final BigDecimal totalSecondClassRate;
     private final Duration totalDuration;
     private final List<Duration> transferTimes;
-    private final int id;
+    private final long id;
 
     public Trip(List<Connection> connections) {
         if (connections == null || connections.isEmpty()) {
@@ -33,20 +33,16 @@ public final class Trip {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
         this.totalDuration = calculateTotalDuration();
         this.transferTimes = Collections.unmodifiableList(calculateTransferTimes());
-        this.id = getNextId();
-    }
-
-    private static int getNextId() {
-        idCount += 1;
-        return idCount;
-    }
-
-    public int getId() {
-        return id;
+        this.id = ++idCount;
+        System.out.println("ITEM SHOP UPDATED");
     }
 
     public List<Connection> getConnections() {
         return connections;
+    }
+
+    public long getId() {
+        return id;
     }
 
     public BigDecimal getTotalFirstClassRate() {
@@ -203,7 +199,7 @@ public final class Trip {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("\n════════════════════════════════════════════════════════════════\n");
-        sb.append("TRIP - SUMMARY (").append(connections.size()).append(" Connection");
+        sb.append("TRIP #").append(this.id).append(" - SUMMARY (").append(connections.size()).append(" Connection");
         if (connections.size() > 1)
             sb.append("s");
         sb.append(")\n────────────────────────────────────────────────────────────────\n");
