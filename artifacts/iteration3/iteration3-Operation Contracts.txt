@@ -1,0 +1,46 @@
+Contract CO1: loadConnections
+
+Operation: loadConnections(file: File): boolean
+Cross References: ConnectionRepository, File
+Preconditions:
+- file exists
+- Terminal's connection to file established
+Postconditions: 
+- ConnectionRepository instantiated, boolean indicates success
+- Connections created and associated to ConnectionRepository
+- database and DBManager initialized by DatabaseInitializer
+
+
+Contract CO2: createSearch
+
+Operation: createSearch(String[]: fields): SearchCriteria 
+Cross References: SearchCriteria, Trip
+Preconditions: 
+- fields are all properly formatted
+Postconditions: 
+- A new SearchCriteria is created with the given fields
+- Returned a list of Trips that match the search, formed of max 3 Connections/legs each
+
+
+Contract CO3: bookTrip
+
+Operation: bookTrip(String[]: passengers, int: tripOption, SearchCriteria: search): Trip
+Cross References: SearchCriteria
+Preconditions:
+- selected trip option exists
+Postconditions:
+- Trip found in SearchCriteria by its tripOption number
+- Traveller(s) accessed or created based on list of Strings passengers
+- Trip is associated to the Traveller(s)
+- database updated with new Trip to Traveller association
+
+
+Contract CO4: viewTrips
+
+Operation: viewTrips(String: firstName, String: lastName, String: id): boolean
+Cross References: DBManager
+Preconditions:
+- firstName, lastName, and id are valid inputs
+- Database connected
+Postconditions:
+- displayed given passenger's associated Trips, boolean indicates success
