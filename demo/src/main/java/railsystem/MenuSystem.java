@@ -241,15 +241,19 @@ public class MenuSystem {
 
             // Get passenger information
             ArrayList<String> nameList = new ArrayList<>();
-            System.out.println(
-                    "Input passenger(s) first name(s), last name(s), and id(s) (press Enter on empty line to finish): ");
+            System.out.println("\nEnter passenger details (press Enter on empty line to finish):");
+            System.out.println("Format: FirstName, LastName, ID");
+            System.out.println("Example: John, Smith, 12345\n");
 
+            int passengerCount = 0;
             while (true) {
+                System.out.print("Passenger " + (passengerCount + 1) + ": ");
                 String name = scanner.nextLine().trim();
                 if (name.isEmpty()) {
                     break;
                 }
                 nameList.add(name);
+                passengerCount++;
             }
 
             // Validate at least one passenger was entered
@@ -258,20 +262,27 @@ public class MenuSystem {
                 return null;
             }
 
-            System.out.println("Passengers: " + nameList);
+            // Display added passengers
+            System.out.println("\n✓ Added " + passengerCount + " passenger(s):");
+            for (int i = 0; i < nameList.size(); i++) {
+                System.out.println("  " + (i + 1) + ". " + nameList.get(i));
+            }
 
             // Get class rate with validation
-            String classRate = getValidatedInput(
-                    "Input class rate (First Class/Second Class): ",
-                    value -> value.isEmpty() ||
-                            value.equalsIgnoreCase("First Class") ||
-                            value.equalsIgnoreCase("Second Class"),
-                    "Please enter 'First Class' or 'Second Class'.");
+            System.out.println("\nSelect ticket class:");
+            System.out.println("[1] First Class");
+            System.out.println("[2] Second Class");
+            String classChoice = getValidatedInput(
+                    "Enter your choice (1/2): ",
+                    value -> value.equals("1") || value.equals("2"),
+                    "Please enter '1' for First Class or '2' for Second Class.");
 
-            if (classRate.isEmpty()) {
-                System.out.println("  [WARN] Class rate is required for booking.");
+            if (classChoice.isEmpty()) {
+                System.out.println("  [WARN] Class selection is required for booking.");
                 return null;
             }
+
+            String classRate = classChoice.equals("1") ? "First Class" : "Second Class";
 
             return new BookingRequest(searchResult.get(option - 1), nameList, classRate);
 
@@ -282,30 +293,8 @@ public class MenuSystem {
         }
     }
 
-    public TravellerInfo getTravellerInfo() {
-        System.out.println("\nEnter your name and id to view your trips.");
-
-        // Validate first name is not empty
-        String firstName;
-        while (true) {
-            System.out.print("First Name: ");
-            firstName = scanner.nextLine().trim();
-            if (!firstName.isEmpty()) {
-                break;
-            }
-            System.out.println("  [WARN] First name cannot be empty.");
-        }
-
-        // Validate last name is not empty
-        String lastName;
-        while (true) {
-            System.out.print("Last Name: ");
-            lastName = scanner.nextLine().trim();
-            if (!lastName.isEmpty()) {
-                break;
-            }
-            System.out.println("  [WARN] Last name cannot be empty.");
-        }
+    public String getTravellerInfo() {
+        System.out.println("\nEnter your id to view your trips.");
 
         // Validate ID is not empty
         String id;
@@ -318,19 +307,21 @@ public class MenuSystem {
             System.out.println("  [WARN] ID cannot be empty.");
         }
 
-        return new TravellerInfo(firstName, lastName, id);
+        return id;
     }
 
     public String getTripViewChoice() {
-        System.out.println("To view current trips [0], to view past trips [1]: ");
+        System.out.println("\nSelect trip view:");
+        System.out.println("[0] Current trips (booked in this session)");
+        System.out.println("[1] Past trips (from previous sessions)");
+        System.out.print("Enter your choice: ");
         return scanner.nextLine().trim();
     }
 
     public void displayTickets(List<Ticket> tickets, String firstName, String lastName) {
         if (tickets == null || tickets.isEmpty()) {
-            System.out.println("\n  No trips found for " + firstName + " " + lastName + ".\n");
+            System.out.println("\n  No trips found.\n");
         } else {
-            System.out.println("\n════════════ YOUR TRIPS ════════════\n");
             for (Ticket ticket : tickets) {
                 System.out.println(ticket.toString());
                 System.out.println("─────────────────────────────────────");

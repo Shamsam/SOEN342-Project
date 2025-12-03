@@ -34,7 +34,25 @@ public final class Trip {
         this.totalDuration = calculateTotalDuration();
         this.transferTimes = Collections.unmodifiableList(calculateTransferTimes());
         this.id = ++idCount;
-        System.out.println("ITEM SHOP UPDATED");
+    }
+
+    // Constructor for restoring trips from database with a specific ID
+    public Trip(long id, List<Connection> connections, BigDecimal totalFirstClassRate,
+            BigDecimal totalSecondClassRate, Duration totalDuration) {
+        if (connections == null || connections.isEmpty()) {
+            throw new IllegalArgumentException("Connections list cannot be null or empty");
+        }
+        this.id = id;
+        this.connections = List.copyOf(connections);
+        this.totalFirstClassRate = totalFirstClassRate;
+        this.totalSecondClassRate = totalSecondClassRate;
+        this.totalDuration = totalDuration;
+        this.transferTimes = Collections.unmodifiableList(calculateTransferTimes());
+
+        // Update idCount if necessary to avoid ID collisions
+        if (id > idCount) {
+            idCount = id;
+        }
     }
 
     public List<Connection> getConnections() {

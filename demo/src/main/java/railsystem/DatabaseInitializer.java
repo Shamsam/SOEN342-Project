@@ -21,7 +21,7 @@ public class DatabaseInitializer {
             if (conn != null) {
                 var meta = conn.getMetaData();
                 System.out.println("The driver name is " + meta.getDriverName());
-                System.out.println("A new database has been created.");
+                System.out.println("Database connection established.");
                 return true;
             }
         } catch (SQLException e) {
@@ -36,14 +36,18 @@ public class DatabaseInitializer {
             List<Connection> connections;
 
             if (dbManager.hasConnections()) {
-                System.out.println("Loading connections from database...");
+                System.out.println("[INFO] Loading connections from database...");
                 connections = dbManager.loadConnections();
 
                 if (connections == null || connections.isEmpty()) {
-                    System.out.println("[WARN] No connections found in database. Attempting to load from CSV...");
+                    System.out.println("[WARN] Database query returned no connections. Attempting to load from CSV...");
                     connections = loadFromCSV();
+                } else {
+                    System.out.println(
+                            "[INFO] Successfully loaded " + connections.size() + " connections from database.");
                 }
             } else {
+                System.out.println("[INFO] Database is empty. Loading connections from CSV file...");
                 connections = loadFromCSV();
             }
 
@@ -54,7 +58,13 @@ public class DatabaseInitializer {
             }
 
             terminal.setConnectionRepo(new ConnectionRepository(connections));
-            System.out.println("[INFO] Loaded " + connections.size() + " connections.\n");
+            terminal.setDbManager(dbManager);
+
+            // Load existing travellers from database into registry
+            dbManager.loadTravellers();
+
+            System.out
+                    .println("[INFO] Connection repository initialized with " + connections.size() + " connections.\n");
             return true;
 
         } catch (Exception e) {
@@ -65,18 +75,23 @@ public class DatabaseInitializer {
 
     private List<Connection> loadFromCSV() {
         try {
-            System.out.println("Loading connections from CSV file...");
+            System.out.println("[INFO] Reading CSV file...");
             List<Connection> connections = terminal.getLoader()
                     .loadConnections(Paths.get("demo/src/main/resources/eu_rail_network.csv"));
 
             if (connections != null && !connections.isEmpty()) {
-                System.out.println("Saving connections to database...");
+                System.out.println("[INFO] Parsed " + connections.size() + " connections from CSV.");
+                System.out.println("[INFO] Saving connections to database...");
                 dbManager.saveConnections(connections);
+                System.out.println("[INFO] Connections saved to database successfully.");
+            } else {
+                System.out.println("[WARN] CSV file was empty or could not be parsed.");
             }
 
             return connections;
         } catch (Exception e) {
             System.out.println("[ERROR] Error loading CSV file: " + e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }

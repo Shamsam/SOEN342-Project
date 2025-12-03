@@ -32,7 +32,7 @@ public class Main {
             scanner = new Scanner(System.in);
             MenuSystem menuSystem = new MenuSystem(scanner, terminal);
             SearchService searchService = new SearchService(terminal, menuSystem);
-            TravellerService travellerService = new TravellerService(menuSystem);
+            TravellerService travellerService = new TravellerService(menuSystem, terminal);
 
             menuSystem.displayWelcome();
 

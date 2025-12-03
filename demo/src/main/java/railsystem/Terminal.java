@@ -15,10 +15,12 @@ final class Terminal {
     private static Terminal instance;
     private Loader loader;
     private ConnectionRepository connectionRepo;
+    private DBManager dbManager;
 
     private Terminal() {
         this.loader = new Loader();
         this.connectionRepo = null;
+        this.dbManager = null;
     }
 
     public static Terminal getInstance() {
@@ -38,6 +40,14 @@ final class Terminal {
 
     public void setConnectionRepo(ConnectionRepository connectionRepo) {
         this.connectionRepo = connectionRepo;
+    }
+
+    public void setDbManager(DBManager dbManager) {
+        this.dbManager = dbManager;
+    }
+
+    public DBManager getDbManager() {
+        return dbManager;
     }
 
     public List<Trip> createSearch(List<String> args) {
@@ -91,6 +101,13 @@ final class Terminal {
             tickets.add(ticket);
         }
         Booking booking = new Booking(tickets);
+
+        // Save booking (which will also save trip and travellers) if dbManager is
+        // available
+        if (dbManager != null) {
+            dbManager.saveBooking(booking);
+        }
+
         return booking;
     }
 

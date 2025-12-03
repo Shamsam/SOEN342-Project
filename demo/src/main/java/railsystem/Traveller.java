@@ -22,6 +22,14 @@ public class Traveller {
         this.id = id;
     }
 
+    public static Traveller getInstance(String id) {
+        Traveller existingTraveller = travellerRegistry.get(id);
+        if (existingTraveller != null) {
+            return existingTraveller;
+        }
+        throw new IllegalArgumentException("Traveller with ID '" + id + "' does not exist.");
+    }
+
     public static Traveller getInstance(String firstName, String lastName, String id) {
         if (firstName == null || firstName.trim().isEmpty() || lastName == null || lastName.trim().isEmpty()
                 || id == null || id.trim().isEmpty()) {
@@ -36,6 +44,10 @@ public class Traveller {
         Traveller newTraveller = new Traveller(firstName, lastName, id);
         travellerRegistry.put(id, newTraveller);
         return newTraveller;
+    }
+
+    public static boolean exists(String id) {
+        return travellerRegistry.containsKey(id);
     }
 
     public static Map<String, Traveller> getAllTravellers() {
