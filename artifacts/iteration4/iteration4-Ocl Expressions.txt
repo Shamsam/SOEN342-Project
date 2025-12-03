@@ -1,0 +1,39 @@
+OCL expression for the reservation method, createBooking
+
+context Terminal::createBooking(trip: Trip, names:  Collection(String), classRate: String): Booking
+
+-- Preconditions
+pre validTrip: trip <> null
+pre validNames: names -> forAll(n | n <> null and n.size() > 0)
+
+-- Postconditions
+
+post bookingCreated: result <> null
+
+post travellersCreated: 
+    result.tickets -> forAll(t | t.traveller <> null)
+
+post ticketsCreated: 
+    result.tickets -> forAll(t | t <> null)
+
+post ticketsAddedToTravellers: 
+    result.tickets -> forAll(t | t.traveller.tickets -> includes(t))
+
+-- Invariants
+inv validTicketList: 
+    tickets <> null and tickets -> size() > 0
+
+----------------------------------------------------------------------
+
+OCL expression for the reservation class, Booking
+
+context Booking
+
+inv validTicketList: 
+    tickets <> null and tickets -> size() > 0
+
+inv noNullTickets: 
+    tickets -> forAll(t | t <> null)
+
+inv uniqueTickets: 
+    tickets -> forAll(t1, t2 | t1 <> t2 implies t1.id <> t2.id)
