@@ -1,4 +1,5 @@
 package railsystem;
+
 import java.util.List;
 import java.math.BigDecimal;
 
@@ -25,7 +26,7 @@ public class Booking {
         for (Ticket ticket : tickets) {
             sb.append(ticket.toString());
         }
-        sb.append("Total Booking Cost: $").append(getTotalBookingCost()).append("\n");
+        sb.append("Total Booking Cost: €").append(getTotalBookingCost()).append("\n");
         sb.append("════════════════════════════════════════════════════════════════\n");
         return sb.toString();
     }
