@@ -242,8 +242,8 @@ public class MenuSystem {
             // Get passenger information
             ArrayList<String> nameList = new ArrayList<>();
             System.out.println("\nEnter passenger details (press Enter on empty line to finish):");
-            System.out.println("Format: FirstName, LastName, ID");
-            System.out.println("Example: John, Smith, 12345\n");
+            System.out.println("Format: FirstName LastName ID");
+            System.out.println("Example: John Smith 12345\n");
 
             int passengerCount = 0;
             while (true) {

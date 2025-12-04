@@ -217,7 +217,7 @@ public final class Trip {
     public String toString() {
         StringBuilder sb = new StringBuilder();
         sb.append("\n════════════════════════════════════════════════════════════════\n");
-        sb.append("TRIP #").append(this.id).append(" - SUMMARY (").append(connections.size()).append(" Connection");
+        sb.append("TRIP - SUMMARY (").append(connections.size()).append(" Connection");
         if (connections.size() > 1)
             sb.append("s");
         sb.append(")\n────────────────────────────────────────────────────────────────\n");
