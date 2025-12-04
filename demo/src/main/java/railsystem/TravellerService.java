@@ -48,6 +48,11 @@ public class TravellerService {
                     DBManager dbManager = terminal.getDbManager();
                     if (dbManager != null) {
                         List<Ticket> pastTickets = dbManager.getTravellerBookings(traveller.getId());
+                        // Filter out tickets from the current session by comparing Trip IDs
+                        pastTickets = pastTickets.stream()
+                                .filter(ticket -> traveller.getTickets().stream()
+                                        .noneMatch(t -> t.getTrip().getId() == ticket.getTrip().getId()))
+                                .toList();
                         if (pastTickets.isEmpty()) {
                             System.out.println("\n  No past trips found for " + traveller.getFirstName() + " "
                                     + traveller.getLastName() + ".\n");
